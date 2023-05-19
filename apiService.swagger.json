@@ -1,0 +1,2654 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Fluid API Layer",
+    "description": "Swagger definition for fluid-api services",
+    "version": "1.0"
+  },
+  "host": "cloudimanage.com",
+  "basePath": "/automate/api",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/v1/customers/{customerId}/libraries/{libraryId}/workflows": {
+      "post": {
+        "x-im-controller": "workflows.controllers",
+        "operationId": "RegisterWorkflow_v1",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customerId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "libraryId",
+            "minLength": 1,
+            "type": "string",
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-im-type-name": "IRegisterWorkflowRequestBody",
+              "description": "Request body for registering a workflow",
+              "properties": {
+                "allowed_groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-im-fluid-uppercase": true
+                  }
+                },
+                "allowed_users": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-im-fluid-uppercase": true
+                  }
+                },
+                "allowed_workspaces": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[^!]+![0-9]+$",
+                    "minLength": 1,
+                    "x-im-fluid-uppercase": true
+                  }
+                },
+                "available_to": {
+                  "type": "string",
+                  "enum": ["everyone", "only_me"],
+                  "description": "Specifies the availability of the workflow mutually exclusive with allowed_users and allowed_groups",
+                  "x-im-fluid-uppercase": true
+                },
+                "callback_url": {
+                  "type": "string",
+                  "minLength": 1,
+                  "format": "uri"
+                },
+                "classes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-im-fluid-uppercase": true
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1,
+                  "x-im-fluid-escape": true,
+                  "maxLength": 256
+                },
+                "form_id": {
+                  "type": "string",
+                  "description": "Id of form to be displayed when a workflow is triggered, empty for workflows without forms",
+                  "x-im-fluid-mongo-id": true,
+                  "x-im-fluid-uppercase": true
+                },
+                "infer_folder_id": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "x-im-fluid-escape": true,
+                  "maxLength": 128,
+                  "pattern": "^(?!\\s*$)[*()&\\-_|@$%^?:{}!#+<>;=\\/\\s'.`~\",\\]\\[(\\u00A0-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF)|\\w]+$"
+                },
+                "object_type": {
+                  "type": "string",
+                  "enum": ["document", "folder", "workspace"],
+                  "x-im-fluid-uppercase": true
+                },
+                "provider_workflow_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "x-im-fluid-escape": true
+                },
+                "provider_id": {
+                  "type": "string",
+                  "enum": ["mpa", "zap"],
+                  "description": "mpa: Microsoft Power Automate, zap: Zapier",
+                  "x-im-fluid-uppercase": true
+                },
+                "selection_type": {
+                  "type": "string",
+                  "enum": ["single", "multiple"],
+                  "x-im-fluid-uppercase": true
+                },
+                "trigger_type": {
+                  "type": "string",
+                  "enum": ["manual", "automatic"],
+                  "x-im-fluid-uppercase": true
+                },
+                "provider_workflow_version": {
+                  "type": "string",
+                  "minLength": 1,
+                  "x-im-fluid-uppercase": true
+                }
+              },
+              "required": [
+                "callback_url",
+                "name",
+                "object_type",
+                "provider_workflow_id",
+                "provider_id",
+                "selection_type",
+                "trigger_type",
+                "provider_workflow_version",
+                "description"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Workflow Registration Successful.",
+            "schema": {
+              "type": "object",
+              "title": "IRegisterWorkflowResponseBody",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "title": "IRegisterWorkflowResponseData",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "x-im-fluid-mongo-id": true
+                    }
+                  },
+                  "required": ["id"],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          },
+          "400": {
+            "description": "Bad Request Error.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "get": {
+        "x-im-controller": "workflows.controllers",
+        "operationId": "GetWorkflows_v1",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "name": "libraryId",
+            "in": "path",
+            "minLength": 1,
+            "type": "string",
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "name": "object_type",
+            "in": "query",
+            "minLength": 1,
+            "type": "string",
+            "enum": ["document", "folder", "workspace"],
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "name": "selection_type",
+            "in": "query",
+            "minLength": 1,
+            "type": "string",
+            "enum": ["single", "multiple"],
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string",
+            "default": "50",
+            "minLength": 1,
+            "x-im-fluid-integer-string": true
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "type": "string",
+            "default": "0",
+            "minLength": 1,
+            "x-im-fluid-integer-string": true
+          },
+          {
+            "name": "object_ids",
+            "in": "query",
+            "type": "string",
+            "x-im-fluid-uppercase": true,
+            "minLength": 1
+          },
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "type": "string",
+            "x-im-fluid-uppercase": true,
+            "minLength": 1
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "type": "string",
+            "x-im-fluid-uppercase": true,
+            "minLength": 1
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "type": "string",
+            "description": "Finds workflows based on tags. Multiple tags can be separated by comma.",
+            "x-im-fluid-uppercase": true,
+            "minLength": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All applicable workflows.",
+            "schema": {
+              "type": "object",
+              "title": "IGetWorkflowsResponseBody",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "title": "IGetWorkflowsResponseData",
+                  "properties": {
+                    "workflows": {
+                      "type": "array",
+                      "description": "The list of workflows matching the request",
+                      "items": {
+                        "type": "object",
+                        "title": "IGetWorkflowsResponseObject",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "minLength": 1,
+                            "x-im-fluid-unescape": true
+                          },
+                          "description": {
+                            "type": "string",
+                            "minLength": 1,
+                            "x-im-fluid-unescape": true
+                          },
+                          "provider_id": {
+                            "type": "string",
+                            "enum": ["MPA", "ZAP"],
+                            "description": "mpa: Microsoft Power Automate, zap: Zapier"
+                          },
+                          "has_form": {
+                            "type": "boolean"
+                          },
+                          "form_id": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "minLength": 1,
+                            "format": "date-time"
+                          },
+                          "last_updated_at": {
+                            "type": "string",
+                            "minLength": 1,
+                            "format": "date-time"
+                          },
+                          "created_by": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "description": "One or more tags associated with the workflow.",
+                            "items": {
+                              "$ref": "#/definitions/WorkflowTagsResponse"
+                            }
+                          },
+                          "options": {
+                            "type": "object",
+                            "properties": {
+                              "infer_folder_id": {
+                                "type": "boolean"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": ["id", "name", "has_form", "created_at", "created_by"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "overflow": {
+                      "type": "boolean",
+                      "description": "Indicates that more items can be returned than specified by the request parameter limit."
+                    },
+                    "cursor": {
+                      "type": "number",
+                      "description": "Indicates the cursor that can be used as the value for 'cursor' parameter for fetching subsequent set of data."
+                    }
+                  },
+                  "required": ["workflows", "overflow", "cursor"],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/submitted-workflows/{workflowId}/runs/{runId}/state": {
+      "patch": {
+        "description": "Updates the state of a workflow run.",
+        "x-im-controller": "workflowState.controllers",
+        "operationId": "UpdateWorkflowState_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "path",
+            "name": "workflowId",
+            "type": "string",
+            "minLength": 1,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "runId",
+            "type": "string",
+            "minLength": 1,
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-im-type-name": "IUpdateWorkflowStateRequestBody",
+              "properties": {
+                "state": {
+                  "type": "string",
+                  "x-im-title": "State",
+                  "description": "Specifies the current state of the workflow run.",
+                  "enum": ["in_progress", "completed", "failed"],
+                  "x-ms-visibility": "important"
+                },
+                "status": {
+                  "type": "string",
+                  "x-im-title": "Status",
+                  "description": "Specifies the current status for the workflow run. Maximum length is 128 characters.",
+                  "maxLength": 128,
+                  "x-ms-visibility": "important"
+                },
+                "statusMessage": {
+                  "type": "string",
+                  "x-im-title": "Status Message",
+                  "description": "Specifies the customized message for the current status of the workflow run. Maximum length is 256 characters.",
+                  "maxLength": 256,
+                  "x-ms-visibility": "important"
+                }
+              },
+              "required": ["state"],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated the workflow run state.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/workflows/{workflowId}": {
+      "delete": {
+        "description": "Un-registers a workflow.",
+        "x-im-controller": "workflow.controllers",
+        "operationId": "UnregisterWorkflow_v1",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customerId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "libraryId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "workflowId",
+            "minLength": 1,
+            "type": "string",
+            "x-im-fluid-mongo-id": true,
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "provider_workflow_version",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow un-registration successful.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/workflows/{workflowId}/submit": {
+      "post": {
+        "description": "Submit a workflow run.",
+        "x-im-controller": "submitWorkflow.controllers",
+        "operationId": "SubmitWorkflow_v1",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customerId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "libraryId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "workflowId",
+            "minLength": 1,
+            "type": "string",
+            "x-im-fluid-mongo-id": true,
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "object",
+              "title": "ISubmitWorkflowRequestBody",
+              "properties": {
+                "context": {
+                  "type": "object",
+                  "title": "ISubmitWorkflowContext",
+                  "properties": {
+                    "selection_type": {
+                      "type": "string",
+                      "enum": ["single", "multiple"],
+                      "x-im-fluid-uppercase": true
+                    },
+                    "object_type": {
+                      "type": "string",
+                      "enum": ["document", "folder", "workspace"],
+                      "x-im-fluid-uppercase": true
+                    },
+                    "object_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "x-im-fluid-uppercase": true,
+                        "minLength": 1
+                      }
+                    },
+                    "folder_id": {
+                      "type": "string",
+                      "x-im-fluid-uppercase": true
+                    },
+                    "workspace_id": {
+                      "type": "string",
+                      "x-im-fluid-uppercase": true
+                    }
+                  },
+                  "required": ["selection_type", "object_type", "object_ids"],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["context"],
+              "additionalProperties": false
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow started successfully.",
+            "schema": {
+              "type": "object",
+              "title": "ISubmitWorkflowResponseBody",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "title": "ISubmitWorkflowResponseData",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "x-im-fluid-mongo-id": true
+                    }
+                  },
+                  "required": ["id"],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          },
+          "303": {
+            "description": "Form based workflow.",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "The form URL"
+              },
+              "x-im-submission-id": {
+                "type": "string",
+                "x-im-fluid-mongo-id": true,
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/workflows/{workflowId}/tags": {
+      "patch": {
+        "description": "Adds or removes tags of a workflow.",
+        "x-im-controller": "workflowTags.controllers",
+        "operationId": "UpdateWorkflowTags_v1",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customerId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "libraryId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "workflowId",
+            "type": "string",
+            "x-im-fluid-mongo-id": true,
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-im-type-name": "IUpdateWorkflowTagsRequestBody",
+              "description": "Request body for tagging or un-tagging a workflow",
+              "properties": {
+                "include": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/WorkflowTagsRequest"
+                  }
+                },
+                "remove": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/WorkflowTagsRequest"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow tagging successful.",
+            "schema": {
+              "type": "object",
+              "title": "IUpdateWorkflowTagsResponseBody",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "title": "IUpdateWorkflowTagsResponseData",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/curation/config": {
+      "put": {
+        "description": "Adds or modifies curation configuration, such as Knowledge administrators and routing folders.",
+        "x-im-controller": "curationConfig.controllers",
+        "operationId": "SetCurationConfig_v1",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customerId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "libraryId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-im-type-name": "ISetCurationConfigRequestBody",
+              "description": "Request body for storing curation config data.",
+              "properties": {
+                "folders": {
+                  "$ref": "#/definitions/CurationFolders"
+                },
+                "knowledge_admins": {
+                  "type": "object",
+                  "properties": {
+                    "include": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/KnowledgeAdmin"
+                      }
+                    },
+                    "remove": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/KnowledgeAdmin"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Setting curation config successful.",
+            "schema": {
+              "$ref": "#/definitions/CurationConfig"
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get curation configuration, such as Knowledge administrators and routing folders.",
+        "x-im-controller": "curationConfig.controllers",
+        "operationId": "GetCurationConfig_v1",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customerId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "libraryId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Getting curation config successful.",
+            "schema": {
+              "$ref": "#/definitions/CurationConfig"
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/event-sink": {
+      "post": {
+        "x-im-controller": "eventSink.controllers",
+        "operationId": "EventSink_v1",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "type": "string",
+            "minLength": 1,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "customerId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "libraryId",
+            "minLength": 1,
+            "type": "string",
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-im-type-name": "IEventSinkRequestBody",
+              "description": "Request body for sending an event to API service.",
+              "properties": {
+                "event_id": {
+                  "type": "string",
+                  "enum": [
+                    "workflow_success",
+                    "workflow_failed",
+                    "workflow_state_cache_update",
+                    "workflow_state_db_update"
+                  ],
+                  "x-im-fluid-uppercase": true
+                },
+                "event_data": {
+                  "type": "object",
+                  "description": "Data for the event",
+                  "x-im-type-name": "IEventSinkRequestData",
+                  "properties": {
+                    "corelation_id": {
+                      "type": "string",
+                      "description": "The corelation ID for the event.",
+                      "x-im-fluid-mongo-id": true
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "The timestamp for the event as an ISO string.",
+                      "pattern": "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})(:)(\\d{2})(:)(\\d{2})(\\.\\d+)?(Z|([+-])(\\d{2})(:)?(\\d{2}))$"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "error": {
+                      "type": "object"
+                    }
+                  },
+                  "required": ["corelation_id", "timestamp"],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["event_id", "event_data"],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded."
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/published-forms": {
+      "post": {
+        "x-im-controller": "publishedForms.controllers",
+        "operationId": "SetPublishedForm_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-im-type-name": "ISetPublishedFormsRequestBody",
+              "description": "Request body for publishing a form",
+              "properties": {
+                "available_to": {
+                  "type": "string",
+                  "enum": ["everyone", "only_me"],
+                  "description": "Specifies the availability of the workflow mutually exclusive with allowed_users and allowed_groups",
+                  "x-im-fluid-uppercase": true
+                },
+                "data_schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "form_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "form_url": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "provider_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "enum": ["im_curation", "typeform"],
+                  "x-im-fluid-uppercase": true
+                }
+              },
+              "required": ["available_to", "data_schema", "description", "form_id", "form_url", "name", "provider_id"],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Form published successfully.",
+            "schema": {
+              "type": "object",
+              "title": "ISetPublishedFormResponseBody",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "title": "ISetPublishedFormResponseData",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "x-im-fluid-mongo-id": true
+                    },
+                    "form_id": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": ["id", "form_id"],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          },
+          "400": {
+            "description": "Bad Request Error.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "get": {
+        "x-im-controller": "publishedForms.controllers",
+        "operationId": "GetPublishedForms_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded",
+            "schema": {
+              "type": "object",
+              "title": "IGetPublishedFormsResponseBody",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "title": "IGetPublishedFormsResult",
+                  "items": {
+                    "$ref": "#/definitions/PublishedForm"
+                  }
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/published-forms/{publishedFormId}/submit": {
+      "post": {
+        "x-im-controller": "submitPublishedForm.controllers",
+        "operationId": "SubmitPublishedForm_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "path",
+            "name": "publishedFormId",
+            "type": "string",
+            "minLength": 1,
+            "x-im-fluid-mongo-id": true,
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/submissionId_in_header"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Form submitted successfully."
+          },
+          "400": {
+            "$ref": "#/responses/Error400"
+          },
+          "500": {
+            "$ref": "#/responses/Error500"
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/published-forms/{formId}": {
+      "get": {
+        "x-im-controller": "publishedForms.controllers",
+        "operationId": "GetPublishedFormById_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "path",
+            "name": "formId",
+            "x-im-fluid-mongo-id": true,
+            "minLength": 1,
+            "type": "string",
+            "required": true,
+            "description": "ID of the form."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded",
+            "schema": {
+              "type": "object",
+              "title": "IGetPublishedFormByIdResponseBody",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/PublishedForm"
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/workflows/submissions/{submissionId}/poll": {
+      "get": {
+        "x-im-controller": "poll.controllers",
+        "operationId": "GetWorkflowDetailsForPolling_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "path",
+            "name": "submissionId",
+            "x-im-fluid-mongo-id": true,
+            "minLength": 1,
+            "type": "string",
+            "required": true,
+            "description": "ID of the submission."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded",
+            "schema": {
+              "type": "object",
+              "title": "IGetSubmissionIdForPollingResponseBody",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "provider_workflow_id": {
+                      "type": "string",
+                      "x-im-fluid-unescape": true,
+                      "minLength": 1
+                    },
+                    "run_id": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/submitted-workflows/{workflowId}/runs/{runId}/poll": {
+      "get": {
+        "description": "Get the current state of a workflow.",
+        "x-im-controller": "poll.controllers",
+        "operationId": "GetWorkflowStateForPolling_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "path",
+            "name": "workflowId",
+            "type": "string",
+            "minLength": 1,
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "runId",
+            "type": "string",
+            "minLength": 1,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded",
+            "schema": {
+              "type": "object",
+              "title": "IGetWorkflowStateForPollingResponseBody",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "state": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "status_message": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/curation/library-mappings": {
+      "put": {
+        "x-im-controller": "curationLibraryMappings.controllers",
+        "operationId": "SetLibraryMappings_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-im-type-name": "ISetLibraryMappingsRequestBody",
+              "description": "Request body for saving mapped libraries for a given knowledge library.",
+              "properties": {
+                "include": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "remove": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded",
+            "schema": {
+              "$ref": "#/definitions/CurationLibraryMappings"
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get curation library mappings.",
+        "x-im-controller": "curationLibraryMappings.controllers",
+        "operationId": "GetLibraryMappings_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request succeeded",
+            "schema": {
+              "$ref": "#/definitions/CurationLibraryMappings"
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/curation/forms": {
+      "post": {
+        "x-im-controller": "curationForms.controllers",
+        "operationId": "RegisterCurationForm_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-im-type-name": "IRegisterCurationFormRequestBody",
+              "description": "Request body for registering a curation form",
+              "properties": {
+                "data_schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "form_id": {
+                  "type": "string",
+                  "enum": [
+                    "im_curation_curate",
+                    "im_curation_publish",
+                    "im_curation_reject",
+                    "im_curation_retire",
+                    "im_curation_submission",
+                    "im_curation_unpublish",
+                    "im_curation_update"
+                  ],
+                  "x-im-fluid-uppercase": true,
+                  "description": "im_curation_submission - curation submission form;",
+                  "minLength": 1
+                },
+                "form_url": {
+                  "type": "string",
+                  "pattern": "^(/[a-zA-Z0-9_-]+)+$",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "ui_schema": {
+                  "$ref": "#/definitions/CurationFormUISchema"
+                }
+              },
+              "required": ["data_schema", "description", "form_id", "name", "ui_schema"],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Curation form registration successful.",
+            "schema": {
+              "type": "object",
+              "title": "IRegisterCurationFormResponseBody",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "title": "IRegisterCurationFormResponseData",
+                  "properties": {
+                    "form_url": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[^!]+![a-zA-Z0-9_]+\\.[0-9]+$",
+                      "minLength": 1
+                    },
+                    "version": {
+                      "type": "number",
+                      "format": "int32"
+                    }
+                  },
+                  "required": ["form_url", "id", "version"],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          },
+          "400": {
+            "description": "Bad Request Error.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/curation/forms/{formId}": {
+      "get": {
+        "x-im-controller": "curationForm.controllers",
+        "operationId": "GetCurationForm_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "name": "formId",
+            "in": "path",
+            "type": "string",
+            "description": "Curation Form ID.",
+            "pattern": "^[^!]+![a-zA-Z0-9_]+\\.[0-9]+$",
+            "x-im-fluid-uppercase": true,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns details of all versions of the form.",
+            "schema": {
+              "type": "object",
+              "title": "IGetCurationFormResponseBody",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/CurationForm"
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/curation/forms/{formId}/versions": {
+      "get": {
+        "x-im-controller": "curationFormVersions.controllers",
+        "operationId": "GetCurationFormVersions_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "name": "formId",
+            "in": "path",
+            "type": "string",
+            "enum": [
+              "im_curation_curate",
+              "im_curation_publish",
+              "im_curation_reject",
+              "im_curation_retire",
+              "im_curation_submission",
+              "im_curation_unpublish",
+              "im_curation_update"
+            ],
+            "description": "Finds curation forms based on form_id.",
+            "x-im-fluid-uppercase": true,
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string",
+            "default": "50",
+            "minLength": 1,
+            "x-im-fluid-integer-string": true
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "type": "string",
+            "default": "0",
+            "minLength": 1,
+            "x-im-fluid-integer-string": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns details of all versions of the form.",
+            "schema": {
+              "type": "object",
+              "title": "IGetCurationFormVersionsResponseBody",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "title": "IGetCurationFormVersionsResponseData",
+                  "properties": {
+                    "forms": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/CurationForm"
+                      }
+                    },
+                    "overflow": {
+                      "type": "boolean",
+                      "description": "Indicates that more items can be returned than specified by the request parameter limit."
+                    },
+                    "cursor": {
+                      "type": "number",
+                      "description": "Indicates the cursor that can be used as the value for 'cursor' parameter for fetching subsequent set of data."
+                    }
+                  },
+                  "required": ["forms", "overflow", "cursor"],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["data"],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/curation/panel-config": {
+      "put": {
+        "x-im-controller": "curationPanelConfig.controllers",
+        "operationId": "PutCurationPanelConfig_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "x-im-type-name": "IPutCurationPanelConfigRequestBody",
+              "description": "Request body for saving curation panel configurations for a given knowledge library.",
+              "properties": {
+                "panel_properties": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/CurationPanelProperty"
+                  }
+                }
+              },
+              "required": ["panel_properties"],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Putting curation panel config successful.",
+            "schema": {
+              "type": "object",
+              "title": "IPutCurationPanelConfigResponseBody",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/CurationPanelConfig"
+                }
+              },
+              "additionalProperties": false,
+              "required": ["data"]
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get curation panel configurations.",
+        "x-im-controller": "curationPanelConfig.controllers",
+        "operationId": "GetCurationPanelConfig_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Getting curation panel config successful.",
+            "schema": {
+              "type": "object",
+              "title": "IGetCurationPanelConfigResponseBody",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/CurationPanelConfig"
+                }
+              },
+              "additionalProperties": false,
+              "required": ["data"]
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/curation/customized-properties": {
+      "put": {
+        "x-im-controller": "curationCustomizedProperties.controllers",
+        "operationId": "PutCustomizedKnowledgeProperty_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "title": "IPutCustomizedKnowledgePropertyRequestBody",
+              "description": "Request body for saving customized property for a given knowledge library.",
+              "properties": {
+                "property_id": {
+                  "$ref": "#/definitions/KnowledgePropertyId"
+                },
+                "captions": {
+                  "$ref": "#/definitions/KnowledgePropertyCaptions"
+                }
+              },
+              "required": ["property_id", "captions"],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Setting knowledge property successful."
+          }
+        }
+      },
+      "get": {
+        "description": "Get customized available properties.",
+        "x-im-controller": "curationCustomizedProperties.controllers",
+        "operationId": "GetCustomizedKnowledgeProperties_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Getting customized property successful.",
+            "schema": {
+              "type": "object",
+              "title": "IGetCustomizedKnowledgePropertiesResponseBody",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "title": "IGetCustomizedKnowledgePropertiesResponseData",
+                  "items": {
+                    "title": "ICustomizedKnowledgePropertyResponseObject",
+                    "type": "object",
+                    "properties": {
+                      "property_id": {
+                        "$ref": "#/definitions/KnowledgePropertyId"
+                      },
+                      "captions": {
+                        "$ref": "#/definitions/KnowledgePropertyCaptions"
+                      },
+                      "last_updated_at": {
+                        "type": "string",
+                        "minLength": 1,
+                        "format": "date-time"
+                      },
+                      "last_updated_by": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": ["property_id", "captions", "last_updated_at", "last_updated_by"],
+                    "additionalProperties": false
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false,
+              "required": ["data"]
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/libraries/{libraryId}/curation/customized-properties/{propertyId}": {
+      "delete": {
+        "x-im-controller": "curationCustomizedProperty.controllers",
+        "operationId": "DeleteCustomizedKnowledgeProperty_v1",
+        "parameters": [
+          {
+            "$ref": "#/parameters/customerId_in_path"
+          },
+          {
+            "$ref": "#/parameters/libraryId_in_path"
+          },
+          {
+            "$ref": "#/parameters/knowledgePropertyId_in_path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleting customized property successful.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "WorkflowTagsRequest": {
+      "title": "IWorkflowTagsRequest",
+      "type": "string",
+      "minLength": 1,
+      "x-im-fluid-uppercase": true,
+      "enum": [
+        "curation.submitted",
+        "curation.indraft",
+        "curation.published",
+        "curation.rejected",
+        "curation.retired",
+        "curation.unpublished"
+      ]
+    },
+    "WorkflowTagsResponse": {
+      "title": "IWorkflowTagsResponse",
+      "type": "string",
+      "minLength": 1,
+      "enum": [
+        "curation.submitted",
+        "curation.indraft",
+        "curation.published",
+        "curation.rejected",
+        "curation.retired",
+        "curation.unpublished"
+      ]
+    },
+    "CurationFolders": {
+      "title": "ICurationFolders",
+      "type": "object",
+      "properties": {
+        "curation_submitted": {
+          "type": "string",
+          "description": "ID of the folder that stores submitted documents"
+        },
+        "curation_indraft": {
+          "type": "string",
+          "description": "ID of the folder that stores in-draft documents"
+        },
+        "curation_published": {
+          "type": "string",
+          "description": "ID of the folder that stores published documents"
+        },
+        "curation_rejected": {
+          "type": "string",
+          "description": "ID of the folder that stores rejected documents"
+        },
+        "curation_retired": {
+          "type": "string",
+          "description": "ID of the folder that stores retired documents"
+        },
+        "curation_unpublished": {
+          "type": "string",
+          "description": "ID of the folder that stores un-published documents"
+        }
+      },
+      "additionalProperties": false
+    },
+    "KnowledgeAdmin": {
+      "title": "IKnowledgeAdmin",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID of the user or group",
+          "minLength": 1,
+          "x-im-fluid-uppercase": true
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the knowledge administrator.",
+          "enum": ["USER", "GROUP"],
+          "minLength": 1
+        }
+      },
+      "required": ["id", "type"],
+      "additionalProperties": false
+    },
+    "CurationLibraryMappings": {
+      "type": "object",
+      "title": "ILibraryMappingsResponseBody",
+      "properties": {
+        "data": {
+          "title": "ILibraryMappingsResponseData",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "title": "ICurationMappedLibrary",
+            "properties": {
+              "libraryId": {
+                "type": "string"
+              },
+              "mapped_libraries": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["libraryId", "mapped_libraries"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["data"],
+      "additionalProperties": false
+    },
+    "CurationConfig": {
+      "type": "object",
+      "title": "ICurationConfigResponseBody",
+      "properties": {
+        "data": {
+          "type": "object",
+          "title": "ICurationConfigResponseData",
+          "properties": {
+            "folders": {
+              "$ref": "#/definitions/CurationFolders"
+            },
+            "knowledge_admins": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/KnowledgeAdmin"
+              }
+            },
+            "knowledge_library_id": {
+              "type": "string",
+              "description": "ID of the configured knowledge library."
+            }
+          },
+          "required": ["folders", "knowledge_admins", "knowledge_library_id"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "KnowledgePropertyId": {
+      "title": "IKnowledgePropertyId",
+      "type": "string",
+      "minLength": 1,
+      "enum": [
+        "bool1",
+        "bool2",
+        "bool3",
+        "bool4",
+        "bool5",
+        "date1",
+        "date10",
+        "date2",
+        "date3",
+        "date4",
+        "date5",
+        "date6",
+        "date7",
+        "date8",
+        "date9",
+        "double1",
+        "double10",
+        "double2",
+        "double3",
+        "double4",
+        "double5",
+        "double6",
+        "double7",
+        "double8",
+        "double9",
+        "long1",
+        "long2",
+        "long3",
+        "long4",
+        "long5",
+        "lookup1",
+        "lookup10",
+        "lookup10_child",
+        "lookup1_child",
+        "lookup2",
+        "lookup2_child",
+        "lookup3",
+        "lookup3_child",
+        "lookup4",
+        "lookup4_child",
+        "lookup5",
+        "lookup5_child",
+        "lookup6",
+        "lookup6_child",
+        "lookup7",
+        "lookup7_child",
+        "lookup8",
+        "lookup8_child",
+        "lookup9",
+        "lookup9_child",
+        "mv_email_address1",
+        "mv_email_address2",
+        "mv_email_address3",
+        "mv_email_address4",
+        "mv_email_address5",
+        "mv_lookup1",
+        "mv_lookup10",
+        "mv_lookup11",
+        "mv_lookup12",
+        "mv_lookup13",
+        "mv_lookup14",
+        "mv_lookup15",
+        "mv_lookup16",
+        "mv_lookup17",
+        "mv_lookup18",
+        "mv_lookup19",
+        "mv_lookup2",
+        "mv_lookup20",
+        "mv_lookup3",
+        "mv_lookup4",
+        "mv_lookup5",
+        "mv_lookup6",
+        "mv_lookup7",
+        "mv_lookup8",
+        "mv_lookup9",
+        "mv_taxonomy1",
+        "mv_taxonomy10",
+        "mv_taxonomy2",
+        "mv_taxonomy3",
+        "mv_taxonomy4",
+        "mv_taxonomy5",
+        "mv_taxonomy6",
+        "mv_taxonomy7",
+        "mv_taxonomy8",
+        "mv_taxonomy9",
+        "mv_text1",
+        "mv_text2",
+        "mv_text3",
+        "mv_text4",
+        "mv_text5",
+        "mv_url1",
+        "mv_url2",
+        "mv_url3",
+        "mv_url4",
+        "mv_url5",
+        "mv_user1",
+        "mv_user2",
+        "mv_user3",
+        "mv_user4",
+        "mv_user5",
+        "mv_user6",
+        "taxonomy1",
+        "taxonomy2",
+        "taxonomy3",
+        "taxonomy4",
+        "text1",
+        "text10",
+        "text2",
+        "text3",
+        "text4",
+        "text5",
+        "text6",
+        "text7",
+        "text8",
+        "text9",
+        "user1",
+        "user2",
+        "user3",
+        "curation.approver",
+        "curation.is_maintained",
+        "curation.knowledge_owner",
+        "curation.knowledge_type",
+        "curation.language",
+        "curation.last_review_date",
+        "curation.next_review_date",
+        "curation.state",
+        "curation.submitted_doc_id",
+        "curation.submitter",
+        "curation.submit_date",
+        "curation.drafting_notes",
+        "curation.mini_summary",
+        "curation.other_noteworthy",
+        "curation.taxonomy1",
+        "curation.taxonomy2",
+        "curation.taxonomy3",
+        "curation.taxonomy4",
+        "curation.taxonomy5"
+      ]
+    },
+    "KnowledgePropertyCaptions": {
+      "title": "IKnowledgePropertyCaptions",
+      "type": "object",
+      "properties": {
+        "en-US": {
+          "type": "string",
+          "description": "US English caption for the given property",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "fr-FR": {
+          "type": "string",
+          "description": "French caption for the given property",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "fr-CA": {
+          "type": "string",
+          "description": "French (Canada) caption for the given property",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "es-ES": {
+          "type": "string",
+          "description": "Spanish caption for the given property",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "de-DE": {
+          "type": "string",
+          "description": "German caption for the given property",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "pt-BR": {
+          "type": "string",
+          "description": "Portuguese caption for the given property",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "ja-JP": {
+          "type": "string",
+          "description": "Japanese caption for the given property",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "zh-CN": {
+          "type": "string",
+          "description": "Chinese caption for the given property",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "additionalProperties": false
+    },
+    "InheritDataFromId": {
+      "title": "InheritDataFromId",
+      "type": "string",
+      "minLength": 1,
+      "enum": [
+        "custom1",
+        "custom2",
+        "custom3",
+        "custom4",
+        "custom5",
+        "custom6",
+        "custom7",
+        "custom8",
+        "custom9",
+        "custom10",
+        "custom11",
+        "custom12",
+        "custom13",
+        "custom14",
+        "custom15",
+        "custom16",
+        "custom17",
+        "custom18",
+        "custom19",
+        "custom20",
+        "custom21",
+        "custom22",
+        "custom23",
+        "custom24",
+        "custom25",
+        "custom26",
+        "custom27",
+        "custom28",
+        "custom29",
+        "custom30",
+        "bool1",
+        "bool2",
+        "bool3",
+        "bool4",
+        "bool5",
+        "date1",
+        "date10",
+        "date2",
+        "date3",
+        "date4",
+        "date5",
+        "date6",
+        "date7",
+        "date8",
+        "date9",
+        "double1",
+        "double10",
+        "double2",
+        "double3",
+        "double4",
+        "double5",
+        "double6",
+        "double7",
+        "double8",
+        "double9",
+        "long1",
+        "long2",
+        "long3",
+        "long4",
+        "long5",
+        "lookup1",
+        "lookup10",
+        "lookup10_child",
+        "lookup1_child",
+        "lookup2",
+        "lookup2_child",
+        "lookup3",
+        "lookup3_child",
+        "lookup4",
+        "lookup4_child",
+        "lookup5",
+        "lookup5_child",
+        "lookup6",
+        "lookup6_child",
+        "lookup7",
+        "lookup7_child",
+        "lookup8",
+        "lookup8_child",
+        "lookup9",
+        "lookup9_child",
+        "mv_email_address1",
+        "mv_email_address2",
+        "mv_email_address3",
+        "mv_email_address4",
+        "mv_email_address5",
+        "mv_lookup1",
+        "mv_lookup10",
+        "mv_lookup11",
+        "mv_lookup12",
+        "mv_lookup13",
+        "mv_lookup14",
+        "mv_lookup15",
+        "mv_lookup16",
+        "mv_lookup17",
+        "mv_lookup18",
+        "mv_lookup19",
+        "mv_lookup2",
+        "mv_lookup20",
+        "mv_lookup3",
+        "mv_lookup4",
+        "mv_lookup5",
+        "mv_lookup6",
+        "mv_lookup7",
+        "mv_lookup8",
+        "mv_lookup9",
+        "mv_taxonomy1",
+        "mv_taxonomy10",
+        "mv_taxonomy2",
+        "mv_taxonomy3",
+        "mv_taxonomy4",
+        "mv_taxonomy5",
+        "mv_taxonomy6",
+        "mv_taxonomy7",
+        "mv_taxonomy8",
+        "mv_taxonomy9",
+        "mv_text1",
+        "mv_text2",
+        "mv_text3",
+        "mv_text4",
+        "mv_text5",
+        "mv_url1",
+        "mv_url2",
+        "mv_url3",
+        "mv_url4",
+        "mv_url5",
+        "mv_user1",
+        "mv_user2",
+        "mv_user3",
+        "mv_user4",
+        "mv_user5",
+        "mv_user6",
+        "taxonomy1",
+        "taxonomy2",
+        "taxonomy3",
+        "taxonomy4",
+        "text1",
+        "text10",
+        "text2",
+        "text3",
+        "text4",
+        "text5",
+        "text6",
+        "text7",
+        "text8",
+        "text9",
+        "user1",
+        "user2",
+        "user3",
+        "curation.approver",
+        "curation.is_maintained",
+        "curation.knowledge_owner",
+        "curation.knowledge_type",
+        "curation.language",
+        "curation.last_review_date",
+        "curation.next_review_data",
+        "curation.state",
+        "curation.submitted_doc_id",
+        "curation.submitter",
+        "curation.drafting_notes",
+        "curation.mini_summary",
+        "curation.other_noteworthy",
+        "curation.taxonomy1",
+        "curation.taxonomy2",
+        "curation.taxonomy3",
+        "curation.taxonomy4",
+        "curation.taxonomy5",
+        "user_preference",
+        "file_create_date",
+        "file_edit_date",
+        "author",
+        "operator",
+        "logged_in_user",
+        "current_date",
+        "current_document_id",
+        "comments"
+      ]
+    },
+    "CurationFormUISchema": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "title": "ICurationUISchemaObject",
+        "type": "object",
+        "properties": {
+          "captions": {
+            "$ref": "#/definitions/KnowledgePropertyCaptions"
+          },
+          "id": {
+            "$ref": "#/definitions/KnowledgePropertyId"
+          },
+          "inherit_data_from": {
+            "$ref": "#/definitions/InheritDataFromId"
+          },
+          "is_required": {
+            "type": "boolean",
+            "default": false
+          },
+          "read_only": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": ["id"],
+        "additionalProperties": false,
+        "minProperties": 1
+      }
+    },
+    "CurationPanelProperty": {
+      "title": "ICurationPanelProperty",
+      "type": "object",
+      "properties": {
+        "property_id": {
+          "$ref": "#/definitions/KnowledgePropertyId"
+        },
+        "is_required": {
+          "type": "boolean",
+          "description": "Indicates whether the property is required in the Curation Panel"
+        }
+      },
+      "required": ["property_id"],
+      "additionalProperties": false
+    },
+    "CurationPanelConfig": {
+      "type": "object",
+      "title": "ICurationPanelConfig",
+      "properties": {
+        "panel_properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CurationPanelProperty"
+          }
+        },
+        "last_updated_at": {
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        },
+        "last_updated_by": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["panel_properties"],
+      "additionalProperties": false
+    },
+    "PublishedForm": {
+      "type": "object",
+      "title": "IPublishedForm",
+      "properties": {
+        "available_to": {
+          "type": "string",
+          "enum": ["EVERYONE", "ONLY_ME"],
+          "description": "Indicates the availability of the workflow mutually exclusive with allowed_users and allowed_groups"
+        },
+        "data_schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "form_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "x-im-fluid-mongo-id": true
+        },
+        "form_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "provider_id": {
+          "type": "string",
+          "minLength": 1,
+          "x-im-fluid-uppercase": true
+        },
+        "created_by": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "x-im-fluid-uppercase": true
+        },
+        "last_updated_by": {
+          "type": "string",
+          "minLength": 1,
+          "x-im-fluid-uppercase": true
+        },
+        "created_at": {
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        },
+        "last_updated_at": {
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "available_to",
+        "data_schema",
+        "form_id",
+        "form_url",
+        "id",
+        "name",
+        "provider_id",
+        "created_by",
+        "last_updated_by",
+        "created_at",
+        "last_updated_at"
+      ],
+      "additionalProperties": false
+    },
+    "CurationForm": {
+      "type": "object",
+      "title": "ICurationFormDetails",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "x-im-fluid-unescape": true
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "x-im-fluid-unescape": true
+        },
+        "data_schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "number",
+          "format": "int32"
+        },
+        "ui_schema": {
+          "$ref": "#/definitions/CurationFormUISchema"
+        },
+        "form_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "last_updated_at": {
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        },
+        "last_updated_by": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "data_schema",
+        "version",
+        "ui_schema",
+        "form_url",
+        "created_at",
+        "created_by",
+        "last_updated_at",
+        "last_updated_by"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "parameters": {
+    "customerId_in_path": {
+      "in": "path",
+      "name": "customerId",
+      "type": "string",
+      "minLength": 1,
+      "x-im-fluid-uppercase": true,
+      "required": true
+    },
+    "libraryId_in_path": {
+      "in": "path",
+      "name": "libraryId",
+      "minLength": 1,
+      "type": "string",
+      "x-im-fluid-uppercase": true,
+      "required": true,
+      "description": "ID of the library."
+    },
+    "knowledgePropertyId_in_path": {
+      "in": "path",
+      "name": "propertyId",
+      "type": "string",
+      "required": true,
+      "description": "ID of the Knowledge Property.",
+      "enum": [
+        "bool1",
+        "bool2",
+        "bool3",
+        "bool4",
+        "bool5",
+        "date1",
+        "date10",
+        "date2",
+        "date3",
+        "date4",
+        "date5",
+        "date6",
+        "date7",
+        "date8",
+        "date9",
+        "double1",
+        "double10",
+        "double2",
+        "double3",
+        "double4",
+        "double5",
+        "double6",
+        "double7",
+        "double8",
+        "double9",
+        "long1",
+        "long2",
+        "long3",
+        "long4",
+        "long5",
+        "lookup1",
+        "lookup10",
+        "lookup10_child",
+        "lookup1_child",
+        "lookup2",
+        "lookup2_child",
+        "lookup3",
+        "lookup3_child",
+        "lookup4",
+        "lookup4_child",
+        "lookup5",
+        "lookup5_child",
+        "lookup6",
+        "lookup6_child",
+        "lookup7",
+        "lookup7_child",
+        "lookup8",
+        "lookup8_child",
+        "lookup9",
+        "lookup9_child",
+        "mv_email_address1",
+        "mv_email_address2",
+        "mv_email_address3",
+        "mv_email_address4",
+        "mv_email_address5",
+        "mv_lookup1",
+        "mv_lookup10",
+        "mv_lookup11",
+        "mv_lookup12",
+        "mv_lookup13",
+        "mv_lookup14",
+        "mv_lookup15",
+        "mv_lookup16",
+        "mv_lookup17",
+        "mv_lookup18",
+        "mv_lookup19",
+        "mv_lookup2",
+        "mv_lookup20",
+        "mv_lookup3",
+        "mv_lookup4",
+        "mv_lookup5",
+        "mv_lookup6",
+        "mv_lookup7",
+        "mv_lookup8",
+        "mv_lookup9",
+        "mv_taxonomy1",
+        "mv_taxonomy10",
+        "mv_taxonomy2",
+        "mv_taxonomy3",
+        "mv_taxonomy4",
+        "mv_taxonomy5",
+        "mv_taxonomy6",
+        "mv_taxonomy7",
+        "mv_taxonomy8",
+        "mv_taxonomy9",
+        "mv_text1",
+        "mv_text2",
+        "mv_text3",
+        "mv_text4",
+        "mv_text5",
+        "mv_url1",
+        "mv_url2",
+        "mv_url3",
+        "mv_url4",
+        "mv_url5",
+        "mv_user1",
+        "mv_user2",
+        "mv_user3",
+        "mv_user4",
+        "mv_user5",
+        "mv_user6",
+        "taxonomy1",
+        "taxonomy2",
+        "taxonomy3",
+        "taxonomy4",
+        "text1",
+        "text10",
+        "text2",
+        "text3",
+        "text4",
+        "text5",
+        "text6",
+        "text7",
+        "text8",
+        "text9",
+        "user1",
+        "user2",
+        "user3",
+        "curation.approver",
+        "curation.is_maintained",
+        "curation.knowledge_owner",
+        "curation.knowledge_type",
+        "curation.language",
+        "curation.last_review_date",
+        "curation.next_review_date",
+        "curation.state",
+        "curation.submitted_doc_id",
+        "curation.submitter",
+        "curation.submit_date",
+        "curation.drafting_notes",
+        "curation.mini_summary",
+        "curation.other_noteworthy",
+        "curation.taxonomy1",
+        "curation.taxonomy2",
+        "curation.taxonomy3",
+        "curation.taxonomy4",
+        "curation.taxonomy5"
+      ]
+    },
+    "submissionId_in_header": {
+      "in": "header",
+      "name": "x-im-submission-id",
+      "type": "string",
+      "minLength": 1,
+      "x-im-fluid-mongo-id": true
+    }
+  },
+  "responses": {
+    "Error400": {
+      "description": "Bad Request Error",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "code_message": {
+                "type": "string"
+              }
+            },
+            "required": ["code", "code_message"]
+          }
+        }
+      }
+    },
+    "Error500": {
+      "description": "Internal Server Error",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "code_message": {
+                "type": "string"
+              }
+            },
+            "required": ["code", "code_message"]
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {},
+  "security": [],
+  "tags": []
+}
